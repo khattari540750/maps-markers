@@ -75,7 +75,7 @@ function initAutocomplete() {
 
   var infoWindow = new google.maps.InfoWindow;
   // Change this depending on the name of your PHP or XML file
-  downloadUrl('toxml.php', function(data) {
+  downloadUrl('https://khattari540750-maps-database.herokuapp.com/index.php', function(data) {
     var xml = data.responseXML;
     var markers = xml.documentElement.getElementsByTagName('marker');
     Array.prototype.forEach.call(markers, function(markerElem) {
