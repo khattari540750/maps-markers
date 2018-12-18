@@ -1,4 +1,6 @@
 function initAutocomplete() {
+  
+  // Create map
   var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -33.8688, lng: 151.2195},
     zoom: 13,
@@ -15,36 +17,38 @@ function initAutocomplete() {
     searchBox.setBounds(map.getBounds());
   });
 
+  // markers list
   var markers = [];
+  
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
   var places = searchBox.getPlaces();
 
   if (places.length == 0) {
-  return;
+    return;
   }
 
   // Clear out the old markers.
   markers.forEach(function(marker) {
-  marker.setMap(null);
+    marker.setMap(null);
   });
   markers = [];
 
   // For each place, get the icon, name and location.
   var bounds = new google.maps.LatLngBounds();
   places.forEach(function(place) {
-  if (!place.geometry) {
-    console.log("Returned place contains no geometry");
-    return;
-  }
-  var icon = {
-    url: place.icon,
-    size: new google.maps.Size(71, 71),
-    origin: new google.maps.Point(0, 0),
-    anchor: new google.maps.Point(17, 34),
-    scaledSize: new google.maps.Size(25, 25)
-  };
+    if (!place.geometry) {
+      console.log("Returned place contains no geometry");
+      return;
+    }
+    var icon = {
+      url: place.icon,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(25, 25)
+    };
 
   // Create a marker for each place.
   markers.push(new google.maps.Marker({
@@ -75,7 +79,8 @@ function initAutocomplete() {
 
   var infoWindow = new google.maps.InfoWindow;
   // Change this depending on the name of your PHP or XML file
-  downloadUrl('https://khattari540750-maps-database.herokuapp.com/index.php', function(data) {
+  //downloadUrl('https://khattari540750-maps-database.herokuapp.com/index.php', function(data) {
+  downloadUrl('test.xml', function(data) {
     var xml = data.responseXML;
     var markers = xml.documentElement.getElementsByTagName('marker');
     Array.prototype.forEach.call(markers, function(markerElem) {
@@ -111,21 +116,21 @@ function initAutocomplete() {
 }
 
 
+function downloadUrl(url, callback) {
+  var request = window.ActiveXObject ?
+    new ActiveXObject('Microsoft.XMLHTTP') :
+    new XMLHttpRequest;
 
-  function downloadUrl(url, callback) {
-    var request = window.ActiveXObject ?
-        new ActiveXObject('Microsoft.XMLHTTP') :
-        new XMLHttpRequest;
+  request.onreadystatechange = function() {
+    if (request.readyState == 4) {
+      request.onreadystatechange = doNothing;
+      callback(request, request.status);
+    }
+  };
+  request.open('GET', url, true);
+  request.send(null);
+}
+  
 
-    request.onreadystatechange = function() {
-      if (request.readyState == 4) {
-        request.onreadystatechange = doNothing;
-        callback(request, request.status);
-      }
-    };
-    request.open('GET', url, true);
-    request.send(null);
-
-  }
-  // getting data from mysql
-  function doNothing() {}
+// getting data from mysql
+function doNothing() {}
